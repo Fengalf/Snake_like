@@ -1,5 +1,5 @@
 # TODO Change from one Game handler class to multiple classes: 1. Snake, 2. Points, 3. Scoreboard
-# TODO Setup snake growth: Create new Character if location is reached
+# TODO Alternatively go with how it is and make points vanish as soon as they're reached
 # TODO Setup snake speed increase
 from turtle import Screen, Turtle
 from game_handler import GameStatusHandler
@@ -48,6 +48,7 @@ def snake_game():
 
         if game.is_coord_reached():
             game.create_random_point_cord_on_map()
+            game.create_character(point_creation=True)
 
     # # Setting up the points to collect as snake
     # points = Turtle()

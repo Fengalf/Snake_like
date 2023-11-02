@@ -80,7 +80,8 @@ class GameStatusHandler():
         self.character.turtlesize(
             stretch_wid=self.character_size, stretch_len=self.character_size)
         self.character.speed(self.character_pace)
-        self.character_list.append(self.character)
+        if not point_creation:
+            self.character_list.append(self.character)
 
     def move_character(self, character):
         """
