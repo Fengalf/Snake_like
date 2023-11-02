@@ -2,7 +2,6 @@
 # TODO Setup snake growth
 # TODO Setup snake speed increase
 from turtle import Screen, Turtle
-from navigate_turtle import MoveTurtle
 from game_handler import GameStatusHandler
 import time
 
@@ -48,8 +47,21 @@ def snake_game():
         snake.setx(off_set)
         off_set -= 20
 
-    # snake_moves = MoveTurtle(turtle=snakes[0])
-    screen.update()
+    game_is_on = True
+    # game.refresh_rate = 0.75
+
+    # Setting up the controls
+    screen.onkey(key="Up", fun=game.turn_first_character_up)
+    screen.onkey(key="Down", fun=game.turn_first_character_down)
+    screen.onkey(key="Left", fun=game.turn_first_character_left)
+    screen.onkey(key="Right", fun=game.turn_first_character_right)
+
+    while game_is_on:
+        screen.update()
+        time.sleep(game.refresh_rate)
+
+        game.move_all_characters_but_first()
+        game.move_first_character()
 
     # # Setting up the points to collect as snake
     # points = Turtle()
