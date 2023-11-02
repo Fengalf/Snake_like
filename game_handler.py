@@ -7,6 +7,7 @@ class GameStatusHandler():
         self.speed = 1
         self.score = 0
         self.point_size = 15
+        self.point_random_location = (0, 0)
         self.window_color = 'black'
         self.window_width = 500
         self.window_height = 500
@@ -17,10 +18,10 @@ class GameStatusHandler():
         self.character_shape = 'square'
         self.character_color = 'white'
         self.character_pace = 20
-        self.refresh_rate = 0.1
-        self.text_color = 'white'
         self.character_list = []
         self.characters_at_start = 3
+        self.refresh_rate = 0.1
+        self.text_color = 'white'
         self.angle = 90
         self.headings = {
             "east": 0,
@@ -43,22 +44,22 @@ class GameStatusHandler():
     def increase_score(self):
         self.score += 1
 
-    def is_going_on(self, character_pos: list) -> bool:
-        if character_pos[0] <= (self.window_width)/2*-1 or character_pos[0] >= (self.window_width)/2:
+    def is_going_on(self) -> bool:
+        if self.character_list[0].pos()[0] <= (self.window_width)/2*-1 or self.character_list[0].pos()[0] >= (self.window_width)/2:
             return False
-        elif character_pos[1] <= (self.window_height)/2*-1 or character_pos[1] >= (self.window_height)/2:
+        elif self.character_list[0].pos()[1] <= (self.window_height)/2*-1 or self.character_list[0].pos()[1] >= (self.window_height)/2:
             return False
         return True
 
     def create_rand_x_coord(self) -> int:
         self.coord = random.randint(
-            self.window_width/2*-1, self.window_width/2)
+            int(self.window_width/2*-1), int(self.window_width/2))
         self.rand_x_coord = self.rand_cord_checker(
             self.coord, self.window_width)
 
     def create_rand_y_coord(self) -> int:
         self.coord = random.randint(
-            self.window_height/2*-1, self.window_height/2)
+            int(self.window_height/2*-1), int(self.window_height/2))
         self.rand_y_coord = self.rand_cord_checker(
             self.coord, self.window_height)
 
@@ -69,9 +70,11 @@ class GameStatusHandler():
             return int(coord + self.point_size)
         return int(coord)
 
-    def create_character(self):
+    def create_character(self, point_creation=False):
         self.character = turtle.Turtle()
         self.character.penup()
+        if point_creation:
+            self.character.setpos(self.point_random_location)
         self.character.color(self.character_color)
         self.character.shape(self.character_shape)
         self.character.turtlesize(
@@ -106,7 +109,7 @@ class GameStatusHandler():
         """
         self.character_list[0].forward(self.character_pace)
 
-    def turn_first_character_clockwise(self,):
+    def turn_first_character_clockwise(self):
         """
             Changes only the first characters heading clockwise.
         """
@@ -149,3 +152,23 @@ class GameStatusHandler():
         if self.character_list[0].heading() != self.headings["east"] \
                 and self.character_list[0].heading() != self.headings["west"]:
             self.character_list[0].setheading(self.headings["east"])
+
+    def create_random_point_cord_on_map(self):
+        self.create_rand_x_coord()
+        self.create_rand_y_coord()
+        self.point_random_location = (self.rand_x_coord, self.rand_y_coord)
+
+    def is_coord_reached(self) -> bool:
+        """
+            Checks if a range of coordinates are reached,
+            \nusing `point_cord` as center.
+        """
+        x_snake, y_snake = self.character_list[0].pos()
+        x_point, y_point = self.point_random_location
+
+        x_point_min = x_point - self.point_size
+        x_point_max = x_point + self.point_size
+        y_point_min = y_point - self.point_size
+        y_point_max = y_point + self.point_size
+
+        return (x_point_min <= x_snake <= x_point_max) and (y_point_min <= y_snake <= y_point_max)
