@@ -2,64 +2,63 @@
 # TODO Alternatively go with how it is and make points vanish as soon as they're reached
 # TODO Setup snake speed increase every x points
 
-from turtle import Screen, Turtle
 from snake_handler import SnakeController
 from food_handler import FoodController
+from score_handler import ScoreController
+from turtle import Screen
 import time
 
 
 def snake_game():
-    generate_new_point = True
-
-    # Setting up the game handlers
+    # Setting up the game controllers
     snake_character = SnakeController()
-    point = FoodController()
-    score_board = snake_character.create_segment(scoreboard_creation=True)
-
-    # Setting up the screen properties
+    food = FoodController()
+    scoreboard = ScoreController()
     screen = Screen()
-    screen.setup(width=snake_character.window_width,
-                 height=snake_character.window_height)
-    screen.bgcolor(snake_character.window_color)
+
+    # Setting variables used
+    width = 500
+    height = 500
+
+    # setting up the screen
+    screen.setup(width=width,
+                 height=height)
+    screen.bgcolor('black')
     screen.tracer(0)
     screen.listen()
 
-    # Our actual snake that we control
-    snake_count = 3
-
-    off_set = 0
     for _ in range(0, snake_character.characters_at_start):
         snake_character.create_segment()
 
+    off_set = 0
     for snake in snake_character.segment_list:
         snake.setx(off_set)
         off_set -= 20
 
-    # Setting up the controls
+    # Setting up the input controls
     screen.onkey(key="Up", fun=snake_character.turn_first_character_up)
     screen.onkey(key="Down", fun=snake_character.turn_first_character_down)
     screen.onkey(key="Left", fun=snake_character.turn_first_character_left)
     screen.onkey(key="Right", fun=snake_character.turn_first_character_right)
 
-    point.create_random_point_cord_on_map()
-    point.move_point()
+    # create the first food
+    food.create_random_point_cord_on_map()
+    food.move_point()
 
+    # running the game itself
     while snake_character.is_going_on():
         screen.update()
-        time.sleep(snake_character.refresh_rate)
+        time.sleep(scoreboard.refresh_rate)
 
         snake_character.move_all_characters_but_first()
         snake_character.move_first_character()
 
-        if point.is_coord_reached(segment=snake_character.segment_list[0]):
-            point.move_point()
+        if int(food.distance(snake_character.segment_list[0].pos())) <= food.point_size:
+            food.move_point()
             snake_character.add_character_to_list()
-            snake_character.score += 1
-            snake_character.update_score(score_board)
+            scoreboard.refresh_score()
 
-    # game_over = Turtle(visible=False)
-    # game_over.color(game.text_color)
-    # game_over.write("Game Over.")
+    scoreboard.game_over()
     screen.exitonclick()
 
 
