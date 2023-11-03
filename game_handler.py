@@ -41,13 +41,12 @@ class GameStatusHandler():
             self.threshold += 5
             self.speed += 1
 
-    def increase_score(self):
-        self.score += 1
-
     def is_going_on(self) -> bool:
         if self.character_list[0].pos()[0] <= (self.window_width)/2*-1 or self.character_list[0].pos()[0] >= (self.window_width)/2:
             return False
         elif self.character_list[0].pos()[1] <= (self.window_height)/2*-1 or self.character_list[0].pos()[1] >= (self.window_height)/2:
+            return False
+        elif self.character_colides_itself():
             return False
         return True
 
@@ -70,23 +69,26 @@ class GameStatusHandler():
             return int(coord + self.point_size)
         return int(coord)
 
-    def create_character(self, point_creation=False):
+    def create_character(self, point_creation=False, scoreboard_creation=False):
         self.character = turtle.Turtle()
         self.character.penup()
-        if point_creation:
-            self.character.setpos(self.point_random_location)
         self.character.color(self.character_color)
         self.character.shape(self.character_shape)
         self.character.turtlesize(
             stretch_wid=self.character_size, stretch_len=self.character_size)
         self.character.speed(self.character_pace)
-        if not point_creation:
+        if point_creation:
+            self.character.setpos(self.point_random_location)
+            return self.character
+        elif scoreboard_creation:
+            self.character.hideturtle()
+            self.character.penup()
+            self.character.sety(self.window_height/2-25)
+            self.character.color(self.text_color)
+            self.character.write(f"Score: {self.score}")
+            return self.character
+        else:
             self.character_list.append(self.character)
-
-    def move_character(self, character):
-        """
-            Moves exactly one character, each time this function is called.
-        """
 
     def move_all_characters_but_first(self, start_backwards=True):
         """
@@ -173,3 +175,41 @@ class GameStatusHandler():
         y_point_max = y_point + self.point_size
 
         return (x_point_min <= x_snake <= x_point_max) and (y_point_min <= y_snake <= y_point_max)
+
+    def move_point(self, character):
+        character.hideturtle()
+        self.create_random_point_cord_on_map()
+        character.setposition(self.point_random_location)
+        character.showturtle()
+
+    def add_character_to_list(self):
+        """
+            Creates another character that's at the end of the character_list
+        """
+        last_character_position: tuple = self.character_list[len(
+            self.character_list)-1].pos()
+        self.create_character()
+        self.character_list[len(self.character_list)-1].setposition(
+            last_character_position)
+
+    def update_score(self, character):
+        character.undo()
+        character.write(f"Score: {self.score}")
+
+    def character_colides_itself(self):
+        first_char = self.character_list[0]
+        first_char_pos = first_char.pos()
+        first_char_x_pos, first_char_y_pos = first_char_pos
+        for index in range(len(self.character_list)-1, 0, -1):
+            current_char = self.character_list[index]
+            current_char_pos = current_char.pos()
+            current_char_x_pos, current_char_y_pos = current_char_pos
+
+            current_char_min_x = current_char_x_pos - (self.point_size/3)
+            current_char_max_x = current_char_x_pos + (self.point_size/3)
+            current_char_min_y = current_char_y_pos - (self.point_size/3)
+            current_char_max_y = current_char_y_pos + (self.point_size/3)
+
+            if (current_char_min_x >= first_char_x_pos <= current_char_max_x) and (current_char_min_y >= first_char_y_pos <= current_char_max_y):
+                return True
+        return False

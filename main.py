@@ -1,6 +1,7 @@
 # TODO Change from one Game handler class to multiple classes: 1. Snake, 2. Points, 3. Scoreboard
 # TODO Alternatively go with how it is and make points vanish as soon as they're reached
-# TODO Setup snake speed increase
+# TODO Setup snake speed increase every x points
+
 from turtle import Screen, Turtle
 from game_handler import GameStatusHandler
 import time
@@ -11,7 +12,8 @@ def snake_game():
 
     # Setting up the game handlers
     game = GameStatusHandler()
-    points = GameStatusHandler()
+    point = game.create_character(point_creation=True)
+    score_board = game.create_character(scoreboard_creation=True)
 
     # Setting up the screen properties
     screen = Screen()
@@ -38,7 +40,8 @@ def snake_game():
     screen.onkey(key="Right", fun=game.turn_first_character_right)
 
     game.create_random_point_cord_on_map()
-    game.create_character(point_creation=True)
+    game.move_point(point)
+
     while game.is_going_on():
         screen.update()
         time.sleep(game.refresh_rate)
@@ -47,62 +50,10 @@ def snake_game():
         game.move_first_character()
 
         if game.is_coord_reached():
-            game.create_random_point_cord_on_map()
-            game.create_character(point_creation=True)
-
-    # # Setting up the points to collect as snake
-    # points = Turtle()
-    # points.shape('classic')
-    # points.color('white')
-    # points.penup()
-    # points.hideturtle()
-
-    # # Setting up the scoreboard
-    # score_board = Turtle()
-    # score_board.hideturtle()
-    # score_board.penup()
-    # score_board.sety(game.window_height/2-25)
-    # score_board.color(game.text_color)
-    # score_board.write(f"Score: {game.score}")
-
-    # # Setting up the controls
-    # screen.onkey(key="Up", fun=snake_moves.face_up)
-    # screen.onkey(key="Down", fun=snake_moves.face_down)
-    # screen.onkey(key="Left", fun=snake_moves.face_left)
-    # screen.onkey(key="Right", fun=snake_moves.face_right)
-
-    # while game.is_going_on([snakes[0].xcor(), snakes[0].ycor()]):
-    #     screen.update()
-    #     time.sleep(game.refresh_rate)
-    #     # checking if a new point has to be generated
-    #     if generate_new_point:
-    #         generate_new_point = False
-    #         game.create_rand_x_coord()
-    #         game.create_rand_y_coord()
-
-    #         # printing the dot / point
-    #         points.setx(game.rand_x_coord)
-    #         points.sety(game.rand_y_coord)
-    #         points.dot(game.point_size)
-
-    #     random_coord = (game.rand_x_coord, game.rand_y_coord)
-
-    #     # checking if a point was collected
-    #     if is_coord_reached(snake_coord, random_coord, game.point_size):
-    #         generate_new_point = True
-    #         game.increase_score()
-    #         score_board.undo()
-    #         score_board.write(f"Score: {game.score}")
-    #         points.clear()
-    #         coords_of_last_snake = snakes[len(snakes)-1].position()
-    #         new_snake = Turtle()
-    #         new_snake.penup()
-    #         new_snake.color(game.character_color)
-    #         new_snake.shape(game.character_shape)
-    #         new_snake.speed(game.speed)
-    #         new_snake.width(game.character_size)
-    #         new_snake.goto(coords_of_last_snake)
-    #         snakes.append(snake)
+            game.move_point(point)
+            game.add_character_to_list()
+            game.score += 1
+            game.update_score(score_board)
 
     # game_over = Turtle(visible=False)
     # game_over.color(game.text_color)
