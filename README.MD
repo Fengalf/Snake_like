@@ -1,7 +1,5 @@
 # A Snake like game
 
----
-
 ## Functionalities
 
 This snakelike game is utilizing classes, slices and loops. I was pretty much playing around with the Turtle library
@@ -14,7 +12,7 @@ Playing the game:
 
 ## Known bugs
 
-* If, before a refresh happens, 2 arrow keystrokes happen, the game over screen is triggered
+* If, before a screen refresh happens, 2 arrow keystrokes happen, the game over screen is triggered
 ** This behavior should not happen and MAY BE resolved in a future 'release'
 
 ## Future ideas
