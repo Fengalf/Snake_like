@@ -38,21 +38,6 @@ class FoodController(Turtle):
         self.create_rand_y_coord()
         self.point_random_location = (self.rand_x_coord, self.rand_y_coord)
 
-    def is_coord_reached(self, segment: Turtle) -> bool:
-        """
-            Checks if a range of coordinates are reached,
-            \nusing `point_cord` as center.
-        """
-        x_snake, y_snake = segment.pos()
-        x_point, y_point = self.point_random_location
-
-        x_point_min = x_point - self.point_size
-        x_point_max = x_point + self.point_size
-        y_point_min = y_point - self.point_size
-        y_point_max = y_point + self.point_size
-
-        return (x_point_min <= x_snake <= x_point_max) and (y_point_min <= y_snake <= y_point_max)
-
     def move_point(self):
         self.create_random_point_cord_on_map()
         self.setposition(self.point_random_location)
