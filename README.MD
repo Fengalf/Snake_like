@@ -1,6 +1,4 @@
-# A Snakelike game
-
-## I am testing around
+# A Snake like game
 
 ---
 
